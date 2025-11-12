@@ -1,0 +1,200 @@
+#include <iostream>
+using namespace std;
+
+// ==============================
+// DOUBLY LINKED LIST IMPLEMENTATION
+// ==============================
+class DoublyLinkedList {
+    struct Node {
+        int data;
+        Node* prev;
+        Node* next;
+    };
+    Node* head;
+
+public:
+    DoublyLinkedList() : head(nullptr) {}
+
+    // Insert at beginning
+    void insertAtBeginning(int val) {
+        Node* newNode = new Node{val, nullptr, nullptr};
+        if (!head) {
+            head = newNode;
+            return;
+        }
+        newNode->next = head;
+        head->prev = newNode;
+        head = newNode;
+    }
+
+    // Insert at end
+    void insertAtEnd(int val) {
+        Node* newNode = new Node{val, nullptr, nullptr};
+        if (!head) {
+            head = newNode;
+            return;
+        }
+        Node* temp = head;
+        while (temp->next) temp = temp->next;
+        temp->next = newNode;
+        newNode->prev = temp;
+    }
+
+    // Delete from beginning
+    void deleteAtBeginning() {
+        if (!head) {
+            cout << "List is empty\n";
+            return;
+        }
+        Node* temp = head;
+        head = head->next;
+        if (head) head->prev = nullptr;
+        delete temp;
+    }
+
+    // Delete from end
+    void deleteAtEnd() {
+        if (!head) {
+            cout << "List is empty\n";
+            return;
+        }
+        if (!head->next) {
+            delete head;
+            head = nullptr;
+            return;
+        }
+        Node* temp = head;
+        while (temp->next) temp = temp->next;
+        temp->prev->next = nullptr;
+        delete temp;
+    }
+
+    void display() {
+        Node* temp = head;
+        cout << "Doubly Linked List: ";
+        while (temp) {
+            cout << temp->data << " ";
+            temp = temp->next;
+        }
+        cout << "\n";
+    }
+};
+
+// ==============================
+// CIRCULAR LINKED LIST IMPLEMENTATION
+// ==============================
+class CircularLinkedList {
+    struct Node {
+        int data;
+        Node* next;
+    };
+    Node* tail; // points to last node
+
+public:
+    CircularLinkedList() : tail(nullptr) {}
+
+    // Insert at beginning
+    void insertAtBeginning(int val) {
+        Node* newNode = new Node{val, nullptr};
+
+        if (!tail) { // empty list
+            newNode->next = newNode;
+            tail = newNode;
+        } else {
+            newNode->next = tail->next; // new node points to head
+            tail->next = newNode;       // tail points to new node (new head)
+        }
+    }
+
+    // Insert at end
+    void insertAtEnd(int val) {
+        Node* newNode = new Node{val, nullptr};
+
+        if (!tail) { // empty list
+            newNode->next = newNode;
+            tail = newNode;
+        } else {
+            newNode->next = tail->next; // new node points to head
+            tail->next = newNode;       // old tail points to new node
+            tail = newNode;             // new node becomes new tail
+        }
+    }
+
+    // Delete from beginning
+    void deleteAtBeginning() {
+        if (!tail) {
+            cout << "List is empty\n";
+            return;
+        }
+
+        Node* head = tail->next;
+        if (head == tail) { // only one node
+            delete head;
+            tail = nullptr;
+        } else {
+            tail->next = head->next;
+            delete head;
+        }
+    }
+
+    // Delete from end
+    void deleteAtEnd() {
+        if (!tail) {
+            cout << "List is empty\n";
+            return;
+        }
+
+        Node* curr = tail->next;
+        if (curr == tail) { // only one node
+            delete tail;
+            tail = nullptr;
+        } else {
+            while (curr->next != tail) curr = curr->next;
+            curr->next = tail->next;
+            delete tail;
+            tail = curr;
+        }
+    }
+
+    void display() {
+        if (!tail) {
+            cout << "List is empty\n";
+            return;
+        }
+        Node* temp = tail->next;
+        cout << "Circular Linked List: ";
+        do {
+            cout << temp->data << " ";
+            temp = temp->next;
+        } while (temp != tail->next);
+        cout << "\n";
+    }
+};
+
+
+int main() {
+    DoublyLinkedList dlist;
+    CircularLinkedList clist;
+
+    cout << "===== DOUBLY LINKED LIST =====\n";
+    dlist.insertAtBeginning(10);
+    dlist.insertAtEnd(20);
+    dlist.insertAtBeginning(5);
+    dlist.display();
+    dlist.deleteAtBeginning();
+    dlist.display();
+    dlist.deleteAtEnd();
+    dlist.display();
+
+    cout << "\n===== CIRCULAR LINKED LIST =====\n";
+    clist.insertAtBeginning(10);
+    clist.insertAtEnd(20);
+    clist.insertAtBeginning(5);
+    clist.display();
+    clist.deleteAtBeginning();
+    clist.display();
+    clist.deleteAtEnd();
+    clist.display();
+
+    return 0;
+}
